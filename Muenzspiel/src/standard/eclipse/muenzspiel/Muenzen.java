@@ -1,16 +1,15 @@
 package standard.eclipse.muenzspiel;
 import java.awt.Color;
-import java.awt.Dimension;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
+
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Toolkit;
+
 import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +43,7 @@ public class Muenzen extends JPanel implements ActionListener, KeyListener, Mous
 	public Ellipse2D circle4;
 	
 	int preX, preY;
-	
+	int PosX, PosY;
 	Computer brain;
 	
 	public double getXVal(){
@@ -56,7 +55,7 @@ public class Muenzen extends JPanel implements ActionListener, KeyListener, Mous
 		
 	}
 	
-	int PosX, PosY;
+
 
 //Konstruktor    
 	public Muenzen(){
@@ -98,8 +97,8 @@ public class Muenzen extends JPanel implements ActionListener, KeyListener, Mous
 	public void initialize(){
 		
 		brain = new Computer(this);
-		Thread secondThread = new Thread ( brain, "second");
-		secondThread.start();
+		//Thread secondThread = new Thread ( brain, "second");
+		//secondThread.start();
 	try{	
 		//muenze = Toolkit.getDefaultToolkit().createImage("Muenze.jpg");
 		muenze = ImageIO.read(new File("Muenze.jpg"));

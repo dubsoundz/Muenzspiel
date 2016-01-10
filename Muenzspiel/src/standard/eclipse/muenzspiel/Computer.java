@@ -1,21 +1,29 @@
 package standard.eclipse.muenzspiel;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
-
+import java.util.Random;
+import java.util.Timer;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-public class Computer implements Runnable {
+public class Computer extends JPanel implements Runnable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public JLabel status;
 	public double XVal[];
 	public double YVal[];
 	private double angle123, angle234, angle341, angle412, angle142, angle143;
-	private double Xdelta12,Xdelta13, Xdelta14, Xdelta21, Xdelta24,Xdelta23,Xdelta31,Xdelta32,Xdelta34,Xdelta41,Xdelta42,Xdelta43;
-	private double Ydelta12,Ydelta13, Ydelta14, Ydelta21, Ydelta24,Ydelta23,Ydelta31,Ydelta32,Ydelta34,Ydelta41,Ydelta42,Ydelta43;
-	private double dist12,dist13,dist41, dist23,dist34, dist42;
+	private double dist12,dist13,dist41, dist23,dist34, dist42, midDist;
 	private Muenzen m;
 	private Point2D p1,p2,p3,p4;
+	public JPanel state;
+	public StatusBar statusBar;
 	
 	protected JLabel Langle123,Langle234;
+	Timer t;
 	
 	int x, y;
 	
@@ -45,6 +53,8 @@ public class Computer implements Runnable {
 		System.out.println(Double.toString(dist23));
 		System.out.println(Double.toString(dist34));
 		System.out.println(Double.toString(dist42));
+		midDist = (dist12+dist13+dist41+dist23+dist34+dist42)/6;
+		System.out.println("mittlerer Abstand: " + Double.toString(midDist));
 	}
 	
 	public void getAngle(){
@@ -78,17 +88,22 @@ public class Computer implements Runnable {
 			//angle123 = Math.asin(Math.sin(dist13/dist12));
 			System.out.println(Double.toString(angle123));	
 		
-		
-		
-		Langle123.setText("Winkel123: "+ 180*angle123/Math.PI + "\n"+
+	angle123= 180*angle123/Math.PI;	
+	angle234 = 180*angle234/Math.PI;
+	angle341 = 180*angle341/Math.PI;
+	angle412 = 180*angle412/Math.PI;
+	angle142 = 180*angle142/Math.PI;
+	angle143 = 180*angle143/Math.PI;
+	
+		Langle123.setText("Winkel123: "+ angle123 + "\n"+
 				"Winkel234:"+180*angle234/Math.PI);
 		
-		System.out.println("Winkel123: "+ 180*angle123/Math.PI + "\n"+
-				"Winkel234:"+180*angle234/Math.PI +  "\n"+
-				"Winkel341:"+180*angle341/Math.PI+ "\n"+
-				"Winkel412:"+180*angle412/Math.PI+"\n"+
-				"Winkel142:"+180*angle142/Math.PI+"\n"+
-				"Winkel143:"+180*angle143/Math.PI);
+		System.out.println("Winkel123: "+ angle123+ "\n"+
+				"Winkel234:"+angle234 +  "\n"+
+				"Winkel341:"+angle341+ "\n"+
+				"Winkel412:"+angle412+"\n"+
+				"Winkel142:"+angle142+"\n"+
+				"Winkel143:"+angle143);
 		
 		
 		
@@ -110,22 +125,23 @@ public class Computer implements Runnable {
 	public boolean isInline(){
 		
 		double anglesum;
-		anglesum = ((angle123+ angle234+angle341+ angle412+ angle142+ angle143)*180)/Math.PI;
+		anglesum = (angle123+ angle234+angle341+ angle412+ angle142+ angle143);
 		System.out.println("Summe aller Winkel: "+ Double.toString(anglesum));
 		
-	if (anglesum >=712 ){
-		return true;
-	}else if((180*angle341)/Math.PI>=170 && (180*angle142)/Math.PI>=170 && (180*angle143)/Math.PI>=170){
-		return true;
-	}else 
-		
+	if ( angle123-10 <= 0 && angle123+10 >= 0 || angle123-10 <= 180 && angle123+10 >= 180 ){
+		if (angle341-10 <= 0 && angle341+10 >= 0 || angle341-10 <= 180 && angle341+10 >= 180 ){
+			return true;
+		}else
+			return false;
+	}else
 		
 		return false;
 		
 	}
-	public boolean equalDistances(){
+	
+	/*public boolean equalDistances(){
 		
-		boolean rel1223, rel2334;
+		boolean rel1223, rel2334, rel1234, rel1242, rel2342;
 		
 		
 		if(dist12<=dist23+10&&dist12>=dist23-10){
@@ -136,14 +152,26 @@ public class Computer implements Runnable {
 			rel2334 = true;
 		}else 
 			rel2334 = false;
+		if(dist12<=dist34+10&&dist12>=dist34-10){
+			rel1234 = true;
+		}else 
+			rel1234 = false;
+		if(dist12<=dist42+10&&dist12>=dist42-10){
+			rel1242 = true;
+		}else 
+			rel1242 = false;
+		if(dist23<=dist42+10&&dist23>=dist42-10){
+			rel2342 = true;
+		}else 
+			rel2342 = false;
 		
-		
-		if (rel1223 && rel2334 == true){
+		if (rel1223 && rel2334 && rel1234 && rel1242 && rel2342== true){
+			
 			return true;
 		}else
 		
 		return false;
-	}
+	}*/
 	
 	public boolean isOverlapping(){
 		
@@ -179,6 +207,38 @@ public class Computer implements Runnable {
 		
 	}
 	
+	public boolean isOutofView(){
+		Rectangle bounds = m.getBounds();
+		if((m.circle1.getX()-bounds.getMaxX() )> 0|| m.circle1.getX()- bounds.getMinX()<0){
+			return true;
+		}
+		if((m.circle2.getX()-bounds.getMaxX() )> 0|| m.circle2.getX()- bounds.getMinX()<0){
+			return true;
+		}
+		if((m.circle3.getX()-bounds.getMaxX() )> 0|| m.circle3.getX()- bounds.getMinX()<0){
+			return true;
+		}
+		if((m.circle4.getX()-bounds.getMaxX() )> 0|| m.circle4.getX()- bounds.getMinX()<0){
+			return true;
+		}
+		//the same for y-border
+		if((m.circle1.getY()-bounds.getMaxY() )>0|| m.circle1.getY()- bounds.getMinY()<0){
+			return true;
+		}
+		if((m.circle2.getY()-bounds.getMaxY() )>0|| m.circle2.getY()- bounds.getMinY()<0){
+			return true;
+		}
+		if((m.circle3.getY()-bounds.getMaxY() )>0|| m.circle3.getY()- bounds.getMinY()<0){
+			return true;
+		}
+		if((m.circle4.getY()-bounds.getMaxY() )>0|| m.circle4.getY()- bounds.getMinY()<0){
+			return true;
+		}else
+		
+		
+		return false;
+	}
+	
 	public boolean isSquared(){
 		return false;
 		
@@ -194,6 +254,14 @@ public class Computer implements Runnable {
 		
 	}
 	
+	public void moveRandom(){
+		Random randomGenX= new Random();
+		int randomInt;
+		randomInt= randomGenX.nextInt((int) m.getBounds().getMaxX());
+		System.out.println(Integer.toString(randomInt));
+		
+		
+	}
 	
 	
 	public Computer(Muenzen m){
@@ -203,8 +271,14 @@ public class Computer implements Runnable {
 		Langle123 = new JLabel("Winkel: ");
 		Langle123.setSize(300,800);
 		status.setSize(300,800);
+		state = new JPanel();
+		state.setBounds(10, 10, 200, 200);
+		
 		Langle123.setFocusable(true);
 		Langle123.setAutoscrolls(true);
+		
+		statusBar = new StatusBar(this);
+		statusBar.setVisible(true);
 		
 		
 	}
@@ -212,6 +286,8 @@ public class Computer implements Runnable {
 		
 		getDistance();
 		getAngle();
+		statusBar.update();
+		moveRandom();
 		
 		if (isRandom()==true){
 			//status.setText("Völlig Ohne Sinn");
@@ -225,15 +301,19 @@ public class Computer implements Runnable {
 			//status.setText("Münzen liegen aufeinander");
 			System.out.println("Münzen liegen aufeinander");
 		}
-		if (equalDistances()==true){
+		/*if (equalDistances()==true){
 			//status.setText("Die Abstände sind ungefähr gleich");
 			System.out.println("Die Abstände sind ungefähr gleich");
-		}
+		}*/
 		if (isInline()==true){
 			//status.setText("Die Münzen liegen in Reihe");
 			System.out.println("Die Münzen liegen in Reihe");
 		}
-		
+		if (isOutofView()==true){
+			
+			//status.setText("Die Münzen liegen in Reihe");
+			System.out.println("Es sind nicht alle Münzen zu sehen");
+		}
 		
 		
 		

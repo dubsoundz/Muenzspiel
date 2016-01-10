@@ -1,24 +1,13 @@
 package standard.eclipse.muenzspiel;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.nio.channels.ShutdownChannelGroupException;
-
 import javax.swing.JFrame;
 import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.SwingConstants;
-
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JSeparator;
+
 
 
 public class Muenzspiel extends JFrame {
@@ -27,6 +16,7 @@ public class Muenzspiel extends JFrame {
 	private static final long serialVersionUID = 1L;
 	JButton btnIch, btnComputer;
 	JLabel textLbl;
+
 	
 	double x0=0,x1=0,x2=0,x3=0, y0=0, y1=0, y2=0, y3=0, velx = 0, vely = 0;
 	
@@ -35,6 +25,7 @@ public class Muenzspiel extends JFrame {
 	
 	Computer brain;
 	private static JPanel muenzPanel_1;
+
 	
 	
 
@@ -47,9 +38,13 @@ public class Muenzspiel extends JFrame {
 				try {
 					Muenzspiel window = new Muenzspiel();
 					window.setVisible(true);
+
 					
 					//start Thread des Computers
-						
+					
+				
+					
+					
 					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -79,11 +74,14 @@ public class Muenzspiel extends JFrame {
 	
 		//JPanel muenzPanel = new JPanel();	
 		muenzPanel_1 = new Muenzen();
+		
+	
 		muenzPanel_1.setLocation(0, 0);
 		//muenzPanel.setBounds(10,6,341,254);
 		muenzPanel_1.setSize(468,500);
 		muenzPanel_1.setAlignmentX(1000);
 		muenzPanel_1.setAlignmentY(1000);
+	
 		//muenzPanel.add(m1);
 	//Fill up ToolBar with elements from MuenzPanel	
 		toolBar.add(((Muenzen) muenzPanel_1).btnIch);
@@ -95,8 +93,9 @@ public class Muenzspiel extends JFrame {
 		toolBar.add(((Muenzen) muenzPanel_1).textLbl);
 		toolBar.add(((Muenzen) muenzPanel_1).brain.status);
 		toolBar.add(((Muenzen) muenzPanel_1).roundLbl);
-		//toolBar.add(((Muenzen) muenzPanel_1).brain.Langle123);
 		
+		//status.getContentPane().add(statusPanel);
+		//toolBar.add(((Muenzen) muenzPanel_1).brain.Langle123);
 		
 		
 	//Give the computer the task to guess the Form
