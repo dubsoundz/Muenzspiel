@@ -18,7 +18,7 @@ public class StatusBar extends JFrame{
 Point p= new Point(1000,1000);
 JPanel statusPanel;
 JLabel computer;
-JLabel test,test2,test3;
+JLabel test,test2,test3,qLabel, crLabel;
 Computer brain;
 JLabel clock;
 Time t;
@@ -37,9 +37,11 @@ Time t;
 		test = new JLabel("inline: yes/no");
 		test2 = new JLabel("All coins visible?: yes/no");
 		test3 = new JLabel("same Distance: yes/no");
+		crLabel = new JLabel("Anzahl Rechter Winkel: ");
+		qLabel = new JLabel("Rechteckförmig?:   yes/no");
 		
 		
-		statusPanel = new JPanel();
+	statusPanel = new JPanel();
 	statusPanel.setAlignmentX(10);
 	statusPanel.setAlignmentY(10);
 	statusPanel.setSize(200, 200);
@@ -49,6 +51,8 @@ Time t;
 	statusPanel.add(test);
 	statusPanel.add(test2);
 	statusPanel.add(test3);
+	statusPanel.add(qLabel);
+
 	
 	
 	this.add(statusPanel);
@@ -57,7 +61,7 @@ Time t;
 	t = new Time(System.currentTimeMillis());
 	clock = new JLabel(t.toString());
 	statusPanel.add(clock);
-
+	statusPanel.add(crLabel);
 	
 	}
 	
@@ -65,7 +69,13 @@ Time t;
 		
 	t= new Time(System.currentTimeMillis());
 	clock.setText("Uhrzeit: "+ t.toString());
+	crLabel.setText("Anzahl Rechter Winkel:" + brain.countRAngle());
 		
+	if(brain.countRAngle()>=4){
+		qLabel.setText("Rechteckförmig?:  ja");
+	}else
+		qLabel.setText("Rechteckförmig?:  no");
+	
 	if(brain.isInline()==true){
 		test.setText("inline: yes");
 	}else
@@ -76,6 +86,10 @@ Time t;
 	}else
 		test2.setText("All coins visible?: yes");
 	}
+	
+	
+	
+
 	
 
 	
