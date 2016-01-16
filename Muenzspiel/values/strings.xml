@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <resources>
+ 		<ComputerMessages id = "1001">
+ 		     	 <Introduction>Hallo, Willkomen in meiner Welt</Introduction>	    
+ 		</ComputerMessages>
+  
+    </resources>

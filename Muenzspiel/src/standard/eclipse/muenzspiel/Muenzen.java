@@ -36,6 +36,8 @@ public class Muenzen extends JPanel implements ActionListener, KeyListener, Mous
 	public JLabel XYValLabel1,XYValLabel2,XYValLabel3,XYValLabel4, textLbl,roundLbl;
 	public JButton btnIch, btnComputer;
 	
+	JCheckBox confirm;
+	
 	BufferedImage muenze;
 	public Ellipse2D circle1;
 	public Ellipse2D circle2;
@@ -45,6 +47,8 @@ public class Muenzen extends JPanel implements ActionListener, KeyListener, Mous
 	int preX, preY;
 	int PosX, PosY;
 	Computer brain;
+	
+	boolean cRound = false;
 	
 	public double getXVal(){
 		return this.XVal[0];
@@ -74,6 +78,10 @@ public class Muenzen extends JPanel implements ActionListener, KeyListener, Mous
 		XYValLabel4 = new JLabel("blablabla");
 		XYValLabel4.setFocusable(true);
 		XYValLabel4.setSize(300, 800);
+		confirm = new JCheckBox("Ready?");
+		confirm.addActionListener(this);
+		
+		
 		
 
 		
@@ -161,6 +169,10 @@ public class Muenzen extends JPanel implements ActionListener, KeyListener, Mous
 		super.setBackground(Color.white);
 	}
 	
+	public void startNewRound(){
+		JOptionPane.showConfirmDialog(this, "OK, nächste Konstellation");
+		confirm.setSelected(false);
+	}
 	
 
 	public void paintComponent(Graphics g){
@@ -248,12 +260,24 @@ public class Muenzen extends JPanel implements ActionListener, KeyListener, Mous
 			textLbl.setText("Computer ist dran!");
 			setFocusable(true);
 			requestFocus();
+			cRound = true;
 			
 		}
 		else if(e.getSource() == this.btnIch){
 			textLbl.setText("Ich bin dran!");
 			setFocusable(true);
 			requestFocus();
+			cRound = false;
+			stop();
+		}
+		else if(e.getSource()==this.confirm){
+			
+			if(confirm.isSelected()){
+				System.out.println("Du hast soeben diesen Zug bestätigt");
+				brain.saveState();
+				startNewRound();
+			}
+			
 		}
 		else{
 			
@@ -268,11 +292,14 @@ public class Muenzen extends JPanel implements ActionListener, KeyListener, Mous
 		
 		}		
 	}
-	public void select(){
+	public int select(){
 		i++;
 		if(i==4){
 			i=0;
 		}
+		
+		
+		return i;
 		
 	}
 	public void stop(){

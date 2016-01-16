@@ -1,12 +1,23 @@
 package standard.eclipse.muenzspiel;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
+import java.sql.Time;
 import java.util.Random;
 import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.*;
 
-public class Computer extends JPanel implements Runnable {
+
+
+
+
+public class Computer extends JPanel implements Runnable, ActionListener {
+	
 	
 	/**
 	 * 
@@ -22,11 +33,17 @@ public class Computer extends JPanel implements Runnable {
 	private Point2D p1,p2,p3,p4;
 	public JPanel state;
 	public StatusBar statusBar;
+	TimerTask schedule;
 	
 	protected JLabel Langle123,Langle234;
-	Timer t;
+	public Timer t = new Timer();
 	
+	double dy, dx;
+	double f = 10;
+	double dt =0;
 	int x, y;
+	int index = 0;
+
 	
 	
 	public void setValues(Muenzen m){
@@ -39,6 +56,68 @@ public class Computer extends JPanel implements Runnable {
 		
 			
 	}
+
+	public void move(){
+	
+		
+		schedule = new TimerTask(){
+			
+			int A = 1;
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				A+=0.001;
+				dt+=0.1;		
+				dy = A*Math.sin(dt);		
+				dx = A*Math.cos(dt);		
+			//	System.out.println(Double.toString(dt)+Double.toString(dy));
+
+				m.XVal[m.i]+=dx;
+				m.YVal[m.i]+=dy;
+				
+				//System.out.println("Index: "+ Integer.toString(m.i));
+				
+				if (!m.cRound){
+					this.cancel();
+					//t.cancel();
+				}
+			}
+
+			@Override
+			public boolean cancel() {
+				// TODO Auto-generated method stub
+				
+				A = 1;
+				dt = 0.1;
+				return super.cancel();
+			
+				
+				
+				
+				
+			}
+		};
+		
+		
+		if(m.cRound==true){ // Wenn der Computer an der Reihe ist
+				
+			t.scheduleAtFixedRate(schedule, 0, 1000); //start moving and do what'S written in schedule
+			
+				if(!m.cRound){
+				//schedule.cancel();	
+				t.purge();
+				t.cancel();
+			}
+			
+					
+		} 
+		     
+	}
+	
+	public void saveState(){
+		
+	}
 	
 	public void getDistance(){
 		
@@ -48,14 +127,16 @@ public class Computer extends JPanel implements Runnable {
 		dist23 = p2.distance(p3);
 		dist34 = p3.distance(p4);
 		dist42 = p4.distance(p2);
+		/*
 		System.out.println(Double.toString(dist12));
 		System.out.println(Double.toString(dist13));
 		System.out.println(Double.toString(dist41));
 		System.out.println(Double.toString(dist23));
 		System.out.println(Double.toString(dist34));
 		System.out.println(Double.toString(dist42));
+		*/
 		midDist = (dist12+dist13+dist41+dist23+dist34+dist42)/6;
-		System.out.println("mittlerer Abstand: " + Double.toString(midDist));
+		//System.out.println("mittlerer Abstand: " + Double.toString(midDist));
 	}
 	
 	int countRAngle(){
@@ -100,7 +181,7 @@ public class Computer extends JPanel implements Runnable {
 			i+=1;
 		}
 				
-		System.out.println(Integer.toString(i));
+		//System.out.println(Integer.toString(i));
 		return i;
 	}
 	
@@ -225,7 +306,7 @@ public class Computer extends JPanel implements Runnable {
 		/*Langle123.setText("Winkel123: "+ angle123 + "\n"+
 				"Winkel234:"+180*angle234/Math.PI);
 		*/
-		System.out.println(
+	/*	System.out.println(
 				"\nWinkel123: "+ angle123+ "\n"+
 				"Winkel312:"+angle312+ "\n"+
 				"Winkel231:"+ angle231+"\n"+
@@ -238,7 +319,7 @@ public class Computer extends JPanel implements Runnable {
 				"Winkel423:"+ angle423+"\n"+
 				"Winkel432:"+ angle432+"\n"+
 				"Winkel412:"+ angle412);
-		
+		*/
 		
 		
 	}
@@ -253,6 +334,10 @@ public class Computer extends JPanel implements Runnable {
 	
 	public boolean isTriangle(){
 		
+		
+		
+		
+		
 		return false;
 	}
 	
@@ -260,7 +345,7 @@ public class Computer extends JPanel implements Runnable {
 		
 		double anglesum;
 		anglesum = (angle123+ angle234+angle341+ angle412+ angle142+ angle143);
-		System.out.println("Summe aller Winkel: "+ Double.toString(anglesum));
+		//System.out.println("Summe aller Winkel: "+ Double.toString(anglesum));
 		
 	if ( angle123-10 <= 0 && angle123+10 >= 0 || angle123-10 <= 180 && angle123+10 >= 180 ){
 		if (angle341-10 <= 0 && angle341+10 >= 0 || angle341-10 <= 180 && angle341+10 >= 180 ){
@@ -389,16 +474,30 @@ public class Computer extends JPanel implements Runnable {
 	}
 	
 	public void moveRandom(){
+		Thread movingThread = new Thread(this);
 		Random randomGenX= new Random();
 		int randomInt;
 		randomInt= randomGenX.nextInt((int) m.getBounds().getMaxX());
-		System.out.println(Integer.toString(randomInt));
+		//System.out.println(Integer.toString(randomInt));
+		
+		
+		if(m.cRound){
+			movingThread.start();
+		}
+		else if(!m.cRound){
+			movingThread.interrupt();
+		}
+		
+	
+		
+		
 		
 		
 	}
 	
 	
 	public Computer(Muenzen m){
+		
 		
 		this.m = m;
 		status = new JLabel("Das ist:...!");
@@ -414,16 +513,23 @@ public class Computer extends JPanel implements Runnable {
 		statusBar = new StatusBar(this);
 		statusBar.setVisible(true);
 		
+	
+
+	
+		
 		
 	}
 	public void update(){
 		
+	
 		getDistance();
 		getAngle();
 		statusBar.update();
 		moveRandom();
 		countRAngle();
-		
+	
+
+	/*
 		if (isRandom()==true){
 			//status.setText("Völlig Ohne Sinn");
 			System.out.println("Völlig Ohne Sinn");
@@ -436,10 +542,10 @@ public class Computer extends JPanel implements Runnable {
 			//status.setText("Münzen liegen aufeinander");
 			System.out.println("Münzen liegen aufeinander");
 		}
-		/*if (equalDistances()==true){
+		if (equalDistances()==true){
 			//status.setText("Die Abstände sind ungefähr gleich");
 			System.out.println("Die Abstände sind ungefähr gleich");
-		}*/
+		}
 		if (isInline()==true){
 			//status.setText("Die Münzen liegen in Reihe");
 			System.out.println("Die Münzen liegen in Reihe");
@@ -450,22 +556,24 @@ public class Computer extends JPanel implements Runnable {
 			System.out.println("Es sind nicht alle Münzen zu sehen");
 		}
 		
-		
-		
+	*/
 	}
-
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
+
+		//System.out.println("Thread started");
+		move();
 	
-		System.out.println("Thread läuft");
-		update();
-				
 	}
 	
-	
-	
-	
-	
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
+
+
+	
